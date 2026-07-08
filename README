@@ -1,0 +1,12 @@
+① Chron‑LLM v1 の目的
+「継続性のある会話・コード生成を行う AI エージェント Runtime」
+
+② ディレクトリ構成
+あなたが書いた構成図をそのまま載せると完璧。
+
+③ 起動方法
+コード
+(ql:quickload :chron-llm)
+(in-package :chron-llm)
+(start-agent)
+など。
