@@ -12,7 +12,26 @@
 ;;;;    - Runtime
 ;;;;    - Generation
 
-(in-package :chron-llm)
+(defpackage :chron-llm.llm.ffi
+  (:use :cl :chron-llm.common)
+  (:export #:llama-token
+           #:my-llama-model-load
+           #:my-llama-model-free
+           #:my-llama-model-get-vocab
+           #:my-llama-init
+           #:my-llama-free
+           #:my-llama-reset-kv
+           #:my-llama-eval
+           #:my-llama-tokenize
+           #:my-llama-token-to-piece
+           #:my-llama-is-eog
+           #:my-sampler-init
+           #:my-sampler-sample
+           #:my-sampler-free
+           #:register-ir-callback
+           #:push-ir-event)) ; 上位レイヤー（エンジン層）で実装されるコールバックの受け口
+
+(in-package :chron-llm.llm.ffi)
 
 ;;; ============================================================
 ;;; Types

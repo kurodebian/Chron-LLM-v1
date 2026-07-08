@@ -2,7 +2,7 @@
 ;;;; Chron-LLM Δ3 Kernel
 ;;;; Runtime <-> Kernel Boundary
 
-(in-package :chron-llm)
+(in-package :chron-llm.kernel)
 
 ;;; ============================================================================
 ;;; DTO

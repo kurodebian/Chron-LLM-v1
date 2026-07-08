@@ -1,4 +1,4 @@
-(in-package :chron-llm)
+(in-package :chron-llm.kernel)
 
 ;;; ============================================================================
 ;;; Chron-LLM Δ3

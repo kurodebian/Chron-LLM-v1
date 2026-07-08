@@ -11,7 +11,20 @@
 ;;;;    - Raw CFFI syntax mapping (ffi-bindings responsibility)
 ;;;;    - View/Prompt generation (Phase B responsibility)
 
-(in-package :chron-llm)
+(defpackage :chron-llm.llm
+  (:use :cl :chron-llm.llm.ffi)
+  (:export #:*model*
+           #:*ctx*
+           #:*sampler*
+           #:*ir-stream*
+           #:clear-ir-stream
+           #:push-ir-event
+           #:load-model
+           #:init-context
+           #:free-engine
+           #:llama-run))
+
+(in-package :chron-llm.llm)
 
 ;;; ============================================================
 ;;; 1. Engine Global State & Active IR Stream
@@ -51,7 +64,7 @@
   (setf *ctx* (my-llama-init *model* n-ctx))
   (setf *sampler* (my-sampler-init temp top-p))
   ;; ffi-bindings側で定義したコールバックをC++側に安全に登録
-  (register-ir-callback (cffi:callback ir-callback))
+  (register-ir-callback (cffi:callback chron-llm.llm.ffi::ir-callback))
   *ctx*)
 
 (defun free-engine ()

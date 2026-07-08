@@ -1,4 +1,4 @@
-(in-package :chron-llm)
+(in-package :chron-llm.kernel)
 
 ;;; ============================================================================
 ;;; Graph Projection Service
@@ -291,34 +291,24 @@
 (defun graph-history (graph world-id)
 
   (let ((node
-         (get-latest-node-in-world
-          graph
-          world-id))
-
+          (get-latest-node-in-world
+           graph
+           world-id))
         (history nil))
 
-    (loop
-      while node
+    (loop while node
+          do
+          (when (eq (causal-node-class node)
+                    :dialogue)
+            (push node history))
 
-      do
-
-      (when
-          (eq (causal-node-class node)
-              :dialogue)
-
-        (push node history))
-
-      (setf
-       node
-
-       (let ((parent
-              (get-parent-node-id
-               graph
-               (causal-node-id node))))
-
-         (and parent
-              (gethash
-               parent
-               (causal-graph-nodes graph)))))
+          (setf node
+                (let ((parent
+                        (get-parent-node-id
+                         graph
+                         (causal-node-id node))))
+                  (and parent
+                       (gethash parent
+                                (causal-graph-nodes graph))))))
 
     history))

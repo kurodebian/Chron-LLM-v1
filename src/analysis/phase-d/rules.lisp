@@ -43,8 +43,8 @@
 (defun %dialogue-edges (triples)
   "user → assistant の対話エッジ（最小版）"
   (loop for i from 0 below (length triples)
-        for t = (nth i triples)
-        for (r _type _payload) = t
+        for triple = (nth i triples)
+        for (r _type _payload) = triple
         when (eq r :assistant)
         collect (let ((j (max 0 (1- i))))
                   (make-reply-edge j i))))

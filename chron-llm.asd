@@ -1,23 +1,34 @@
-(register-groups-bind () nil) ;; 処理系保護用
-
-(defsystem "chron-llm"
+(asdf:defsystem "chron-llm"
   :version "1.0.0"
   :author "Junu"
   :license "MIT"
   :description "Causal Analysis Pipeline & Multi-World Execution Engine for Persistent AI Agent"
   :depends-on (:cffi :uiop)
   :serial t
+
   :components
-  ((:file "package")
+  (
+   ;; ------------------------------------------------------------
+   ;; package.lisp
+   ;; ------------------------------------------------------------
+   (:file "package")
+
+   ;; ------------------------------------------------------------
+   ;; src/
+   ;; ------------------------------------------------------------
    (:module "src"
+    :serial t
     :components
-    ((:module "common"
+    (
+
+     ;; common/
+     (:module "common"
+      :serial t
       :components
       ((:file "types")))
 
-     ;; 1. 物理層 (LLM Interaction)
+     ;; llm/
      (:module "llm"
-      :depends-on ("common")
       :serial t
       :components
       ((:file "ffi-bindings")
@@ -26,81 +37,106 @@
        (:file "session")
        (:file "generate")))
 
-     ;; 2. 実行層 (World State Sandbox)
+     ;; kernel/
      (:module "kernel"
-      :depends-on ("common" "llm")
+      :serial t
       :components
       ((:file "world")
        (:file "causal")
        (:file "graph")
        (:file "immune")
-       (:file "kernel" :depends-on ("world" "causal" "graph" "immune"))))
+       (:file "kernel")))
 
-     ;; 3. 解析層 (Causal & Dynamical Analysis)
+     ;; analysis/
      (:module "analysis"
-      :depends-on ("common" "kernel")
+      :serial t
       :components
-      ((:module "phase-a"
+      (
+
+       ;; phase-a/
+       (:module "phase-a"
         :serial t
         :components
         ((:file "event")
          (:file "history")
          (:file "serializer")))
+
+       ;; phase-b/
        (:module "phase-b"
-        :depends-on ("phase-a")
+        :serial t
         :components
         ((:file "view")))
+
+       ;; phase-c/
        (:module "phase-c"
-        :depends-on ("phase-b")
         :serial t
         :components
         ((:file "event-abi")
          (:file "justification")
          (:file "model")
          (:file "projection")))
+
+       ;; phase-d/
        (:module "phase-d"
-        :depends-on ("phase-c")
+        :serial t
         :components
         ((:file "node")
          (:file "edge")
-         (:file "graph"     :depends-on ("node" "edge"))
-         (:file "rules"     :depends-on ("graph"))
-         (:file "builder"   :depends-on ("graph" "rules"))
-         (:file "inference" :depends-on ("builder"))
-         (:file "rollout"   :depends-on ("inference"))
-         (:file "trace"     :depends-on ("rollout"))))
+         (:file "graph")
+         (:file "rules")
+         (:file "builder")
+         (:file "inference")
+         (:file "rollout")
+         (:file "trace")))
+
+       ;; phase-e/
        (:module "phase-e"
-        :depends-on ("phase-d")
+        :serial t
         :components
         ((:file "scc")
+         (:file "dynamics")
          (:file "cycle")
          (:file "basin")
-         (:file "dynamics")
-         (:file "analyze" :depends-on ("scc" "cycle" "basin" "dynamics"))))))
+         (:file "analyze")))))
 
-     ;; 4. 対話層 (Pure REPL Interface)
+     ;; runtime/
      (:module "runtime"
-      :depends-on ("llm" "kernel" "analysis")
+      :serial t
       :components
       ((:file "runtime")))))
 
-   ;; 5. 最上位アプリケーション (Agent)
+   ;; ------------------------------------------------------------
+   ;; agent/
+   ;; ------------------------------------------------------------
    (:module "agent"
-    :depends-on ("src")
+    :serial t
     :components
-    ((:file "phi4-agent")))))
+    ((:file "phi4-agent")))
+   ))
 
-;;; テスト用サブシステムの定義
-(defsystem "chron-llm/tests"
+
+;;; ------------------------------------------------------------
+;;; Test System
+;;; ------------------------------------------------------------
+
+(asdf:defsystem "chron-llm/tests"
   :depends-on ("chron-llm")
   :serial t
+
   :components
-  ((:module "tests"
+  (
+   (:module "tests"
+    :serial t
     :components
-    ((:module "kernel"
+    (
+
+     (:module "kernel"
+      :serial t
       :components
       ((:file "run-test")))
+
      (:module "analysis"
+      :serial t
       :components
       ((:file "history-test")
        (:file "serializer-test")

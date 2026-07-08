@@ -14,7 +14,7 @@
 ;;;;    - Immune
 ;;;;    - Graph Projection
 
-(in-package :chron-llm)
+(in-package :chron-llm.kernel)
 
 ;; ============================================================================
 ;; 1. Active Context Structures (Evolved from r0/history.lisp)

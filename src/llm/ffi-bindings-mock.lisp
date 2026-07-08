@@ -2,7 +2,7 @@
 ;;;; Chron-LLM v1
 ;;;; Mock Physical Layer
 
-(in-package :chron-llm)
+(in-package :chron-llm.llm)
 
 ;;; ============================================================
 ;;; Mock Structures

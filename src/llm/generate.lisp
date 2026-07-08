@@ -14,7 +14,7 @@
 ;;;;   - World
 ;;;;   - Immune
 ;;;;   - History
-(in-package :chron-llm)
+(in-package :chron-llm.llm)
 
 (defun run-llm-generation
     (kernel

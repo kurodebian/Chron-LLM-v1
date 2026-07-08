@@ -3,18 +3,19 @@
 ;;;; Common ABI
 ;;;;
 ;;;; Responsibility
-;;;;    - Shared system data structures
-;;;;    - Event ABI
-;;;;    - Common constructors
+;;;;     - Shared system data structures
+;;;;     - Event ABI
+;;;;     - Common constructors
 ;;;;
 ;;;; Non Responsibility
-;;;;    - WAL
-;;;;    - Graph
-;;;;    - Runtime
-;;;;    - LLM
-;;;;    - Kernel logic
+;;;;     - WAL
+;;;;     - Graph
+;;;;     - Runtime
+;;;;     - LLM
+;;;;     - Kernel logic
 
-(in-package :chron-llm)
+;; 修正：正しいサブパッケージ名に指定を変更
+(in-package :chron-llm.common)
 
 ;;; ============================================================
 ;;; 1. LLM Raw Token Interface (Merged from ir.lisp)

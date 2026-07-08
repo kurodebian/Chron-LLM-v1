@@ -2,7 +2,7 @@
 ;;;; Chron-LLM v1
 ;;;; Boot Entry
 
-(in-package :chron-llm)
+(in-package :chron-llm.agent)
 
 ;;; ============================================================
 ;;; Boot Entry
@@ -10,6 +10,7 @@
 
 (defparameter *default-model-path*
   "/path/to/model.gguf")
+
 
 (defun start-delta3
     (&optional
@@ -21,8 +22,9 @@
   (format t "Model : ~A~%" model-path)
   (format t "========================================~%")
 
-  ;; Runtime がモデル初期化を担当
+  ;; Runtime Layer がモデル初期化と REPL 制御を担当
   (agent-main-loop model-path))
+
 
 (defun start-delta3-stub ()
   "スタブ環境で Runtime を起動する。"

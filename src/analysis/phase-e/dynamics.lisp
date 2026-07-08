@@ -1,16 +1,17 @@
-;;;; dynamics.lisp
-;;;; Chron-LLM v1
-;;;; Analysis Layer (Phase E) - Causal & Graph Dynamics
-;;;;
-;;;; Responsibility
-;;;;    - Microscopic trial divergence profiling (p-same metrics)
-;;;;    - Macroscopic graph attractor and rollout simulation
-;;;;
-;;;; Non Responsibility
-;;;;    - CFFI Low-level registry mapping (LLM responsibility)
-;;;;    - Modifying active world topologies (Kernel responsibility)
+(defpackage :phase-e.dynamics
+  (:use :cl
+        :chron-llm.common
+        :chron-llm.llm        ; llama-run, *ir-stream* の実体があると推測される場所
+        :phase-d.graph        ; graph-edges を想定
+        :phase-d.edge)        ; edge-from, edge-to, edge-strength を想定
+  (:export #:extract-actions
+           #:run-ir-trial
+           #:divergence-profile
+           #:next-event
+           #:rollout*
+           #:find-attractor))
 
-(in-package :chron-llm)
+(in-package :phase-e.dynamics)
 
 ;;; ============================================================
 ;;; 1. Microscopic Trial Dynamics (Merged from ir/divergence.lisp)
@@ -25,7 +26,6 @@
 
 (defun run-ir-trial (prompt)
   "Clears native token buffer, triggers FFI generation, and returns high-res action vector."
-  ;; llama-engine.lisp 側のインメモリ高速駆動版をダイレクトに叩き、*ir-stream* を回収
   (llama-run prompt)
   (coerce (extract-actions *ir-stream*) 'vector))
 
@@ -75,5 +75,5 @@
 (defun find-attractor (graph start steps)
   "Simulates macro-dynamics and returns the final observed attractor node (Lock-in check)."
   (first
-   (last
-    (rollout* graph start steps))))
+    (last
+     (rollout* graph start steps))))

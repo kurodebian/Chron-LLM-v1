@@ -10,7 +10,16 @@
 ;;;;    - WAL / Causal tracking (Kernel responsibility)
 ;;;;    - Mutable state or stream management (LLM / Kernel responsibility)
 
-(in-package :chron-llm)
+(defpackage :phase-a.event
+  (:use :cl)
+  (:export
+   #:make-event
+   #:event-p
+   #:event-type
+   #:event-payload
+   #:event-equal))
+
+(in-package :phase-a.event)
 
 ;;; ============================================================
 ;;; Phase A Event Structure (Upgraded & Collision-Free)
