@@ -3,22 +3,24 @@
 ;;;; LLM Generation Layer
 ;;;;
 ;;;; Responsibility:
+;;;;   - Model Initialization
+;;;;   - Prompt Prefill
 ;;;;   - Sampling
 ;;;;   - Decode
-;;;;   - Streaming Output
-;;;;   - Commit Assistant Reply
+;;;;   - Text Generation
 ;;;;
 ;;;; Non Responsibility:
+;;;;   - Kernel Commit
 ;;;;   - WAL
 ;;;;   - Graph
 ;;;;   - World
 ;;;;   - Immune
 ;;;;   - History
+
 (in-package :chron-llm.llm)
 
-(defun run-llm-generation
-    (kernel
-     model-path
+(defun llm-generate-text
+    (model-path
      prompt
      &key
        (max-tokens 256)
@@ -44,6 +46,7 @@
            ;; Prefill
            ;; --------------------------------------------------
            (setf *n-past* 0)
+
            (prefill-prompt
             ctx
             (tokenize model prompt))
@@ -107,12 +110,8 @@
                  (incf *n-past*))))
 
            ;; --------------------------------------------------
-           ;; Commit Reply
+           ;; Return Generated Text
            ;; --------------------------------------------------
-           (kernel-submit-assistant-reply
-            kernel
-            reply)
-
            reply)
 
       ;; ------------------------------------------------------

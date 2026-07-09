@@ -5,9 +5,7 @@
 (defpackage :phase-b.view
   (:use :cl
         :chron-llm.common
-        :phase-a.event
-        :phase-a.history)
-
+        :chron-llm.kernel)   ;; ★ Kernel DTO を参照できるように追加
   (:export
    #:view-type-count
    #:view-length
@@ -15,50 +13,51 @@
    #:view-last
    #:project-to-prompt))
 
-
 (in-package :phase-b.view)
 
 ;;; ============================================================
-;;; Statistical Projection
+;;; Statistical Projection (context-object / history-entry)
 ;;; ============================================================
 
-(defun view-type-count (timeline)
-  "Calculates frequency distribution of event types."
+(defun view-type-count (context)
+  "Counts event kinds in Kernel DTO history."
   (let ((table (make-hash-table))
-        (events (world-timeline-events timeline)))
-    (loop for e across events do
-      (incf (gethash (event-type e) table 0)))
+        (events (context-object-history context)))
+    (dolist (e events)
+      (incf (gethash (history-entry-kind e) table 0)))
     table))
 
-(defun view-length (timeline)
-  "Returns timeline event count."
-  (length (world-timeline-events timeline)))
+(defun view-length (context)
+  "Returns number of history entries."
+  (length (context-object-history context)))
 
-(defun view-first (timeline)
-  "Returns first event."
-  (let ((events (world-timeline-events timeline)))
-    (when (> (length events) 0)
-      (aref events 0))))
+(defun view-first (context)
+  "Returns first history-entry."
+  (first (context-object-history context)))
 
-(defun view-last (timeline)
-  "Returns latest event."
-  (let ((events (world-timeline-events timeline)))
-    (when (> (length events) 0)
-      (aref events (1- (length events))))))
+(defun view-last (context)
+  "Returns last history-entry."
+  (car (last (context-object-history context))))
 
 ;;; ============================================================
-;;; Prompt Projection
+;;; Prompt Projection (Kernel DTO → LLM Prompt)
 ;;; ============================================================
 
-(defun project-to-prompt (timeline)
-  "Pure projection from timeline to LLM prompt stream."
-  (let ((events (world-timeline-events timeline)))
-    (with-output-to-string (s)
-      (format s "<|begin_of_text|>~%")
-      (format s "<|start_header_id|>system<|end_header_id|>~%")
-      (format s "あなたは日本語で丁寧に答えるアシスタントです。~%")
-      (loop for e across events do
-        (format s "<|start_header_id|>~(~A~)<|end_header_id|>~%~A~%"
-                (history-event-role e)
-                (history-event-content e)))
-      (format s "<|start_header_id|>assistant<|end_header_id|>"))))
+(defun project-to-prompt (context)
+  "Convert Kernel DTO history into LLM prompt stream."
+  (with-output-to-string (s)
+
+    ;; System header
+    (format s "<|begin_of_text|>~%")
+    (format s "<|start_header_id|>system<|end_header_id|>~%")
+    (format s "あなたは日本語で丁寧に答えるアシスタントです。~%")
+
+    ;; Dialogue history
+    (dolist (e (context-object-history context))
+      (format s
+              "<|start_header_id|>~(~A~)<|end_header_id|>~%~A~%"
+              (history-entry-kind e)
+              (history-entry-text e)))
+
+    ;; Assistant header (LLM will continue from here)
+    (format s "<|start_header_id|>assistant<|end_header_id|>")))

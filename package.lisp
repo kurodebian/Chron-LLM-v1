@@ -5,6 +5,7 @@
 (defpackage :chron-llm.common
   (:use :cl)
   (:export
+   ;; IR
    #:ir
    #:make-ir
    #:ir-ctx-id
@@ -12,11 +13,11 @@
    #:ir-phase
    #:ir-token
    #:ir-score
+   ;; High-level conversation atom
    #:history-event
    #:make-history-event
    #:history-event-role
    #:history-event-content))
-
 
 ;; ============================================================
 ;; LLM Layer
@@ -36,8 +37,7 @@
    #:*ir-stream*
    #:push-ir
    #:clear-ir-stream
-   #:run-llm-generation))
-
+   #:llm-generate-text))
 
 ;; ============================================================
 ;; Kernel Layer
@@ -48,23 +48,29 @@
         :chron-llm.common
         :chron-llm.llm)
   (:export
+   ;; Kernel container
    #:make-chron-kernel
-
-   #:kernel-submit-user-input
-   #:kernel-submit-assistant-reply
-
    #:kernel-current-state
    #:kernel-state-world-id
    #:kernel-state-health
    #:kernel-state-context
 
-   #:history
-   #:make-history
-   #:history-events
-   #:history-append
-   #:history-size
-   #:history-copy))
+   ;; Context DTO
+   #:context-object
+   #:context-object-history
 
+   ;; History-entry DTO
+   #:history-entry
+   #:history-entry-kind
+   #:history-entry-text
+
+   ;; Public commit API
+   #:kernel-submit-user-input
+   #:kernel-submit-assistant-reply
+
+   ;; World API
+   #:kernel-create-world
+   #:kernel-switch-world))
 
 ;; ============================================================
 ;; Analysis Layer (Top-level only)
@@ -76,15 +82,17 @@
         :chron-llm.llm
         :chron-llm.kernel)
   (:export
-   ;; Phase-B API (export only; actual package defined in phase-b/view.lisp)
+   ;; Phase-B API (facade)
    #:project-to-prompt
    #:view-last
+   #:view-length
+   #:view-first
+   #:view-type-count
 
-   ;; Phase-D/E API
+   ;; Phase-E API
    #:divergence-profile
-   #:log-trace
-   #:save-trace-to-file))
-
+   ;; Phase-D/E trace helpers（必要なら後で追加）
+   ))
 
 ;; ============================================================
 ;; Runtime Layer
@@ -92,13 +100,12 @@
 
 (defpackage :chron-llm.runtime
   (:use :cl
-        :chron-llm.llm
         :chron-llm.kernel
         :chron-llm.analysis)
   (:export
    #:start-chat
-   #:agent-main-loop))
-
+   #:agent-main-loop
+   #:run-llm-generation))
 
 ;; ============================================================
 ;; Agent Layer

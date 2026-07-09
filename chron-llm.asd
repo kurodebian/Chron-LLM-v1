@@ -103,7 +103,8 @@
      (:module "runtime"
       :serial t
       :components
-      ((:file "runtime")))))
+      ((:file "generation")
+       (:file "runtime")))))
 
    ;; ------------------------------------------------------------
    ;; agent/
